@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Hero } from "@/components/Hero";
 import { EvaluationForm } from "@/components/EvaluationForm";
 import { EvaluationResult } from "@/components/EvaluationResult";
-import { DoubtChat } from "@/components/DoubtChat";
 import { LearningGraph } from "@/components/LearningGraph";
 import { useToast } from "@/hooks/use-toast";
 
@@ -12,7 +11,10 @@ const Index = () => {
     score: number;
     feedback: string;
     topic: string;
-    answer: string;
+    keywords: {
+      covered: string[];
+      missing: string[];
+    };
   } | null>(null);
   const { toast } = useToast();
 
@@ -32,25 +34,33 @@ const Index = () => {
     setTimeout(() => {
       const mockScore = Math.floor(Math.random() * 3) + 2.5; // Random score between 2.5-5
       const roundedScore = Math.round(mockScore * 2) / 2; // Round to nearest 0.5
+      
+      // Generate mock keywords based on topic
+      const mockKeywords = {
+        covered: ["Core Concepts", "Basic Principles", "Definition", "Examples"],
+        missing: ["Advanced Applications", "Critical Analysis", "Comparative Study", "Real-world Context"]
+      };
+      
       const mockFeedback = `Great effort on explaining ${topic}! 
 
 Strengths:
-• Clear understanding of core concepts
+• Clear understanding of core concepts covered
 • Well-structured response with logical flow
-• Good use of relevant examples
+• Good use of basic examples
 
 Areas for Improvement:
-• Consider adding more specific details to strengthen your arguments
-• Include additional examples to demonstrate deeper understanding
-• Connect concepts to real-world applications for better context
+• Missing key concepts highlighted above - review these areas
+• Add more specific details and advanced applications
+• Include comparative analysis to strengthen understanding
+• Connect concepts to real-world scenarios
 
-Keep up the excellent work! Your analytical approach shows promise. Focus on expanding your explanations with more concrete examples and you'll see continued improvement.`;
+Focus on incorporating the missing keywords in your next attempt. These are essential for a complete understanding of ${topic}.`;
 
       setEvaluation({
         score: roundedScore,
         feedback: mockFeedback,
         topic,
-        answer,
+        keywords: mockKeywords,
       });
 
       // Update learning data
@@ -78,17 +88,14 @@ Keep up the excellent work! Your analytical approach shows promise. Focus on exp
       <EvaluationForm onSubmit={handleSubmit} isLoading={isLoading} />
       
       {evaluation && (
-        <>
-          <div id="evaluation-results">
-            <EvaluationResult 
-              score={evaluation.score}
-              feedback={evaluation.feedback}
-              topic={evaluation.topic}
-            />
-          </div>
-          
-          <DoubtChat topic={evaluation.topic} answer={evaluation.answer} />
-        </>
+        <div id="evaluation-results">
+          <EvaluationResult 
+            score={evaluation.score}
+            feedback={evaluation.feedback}
+            topic={evaluation.topic}
+            keywords={evaluation.keywords}
+          />
+        </div>
       )}
       
       <LearningGraph data={learningData} />
