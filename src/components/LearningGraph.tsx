@@ -32,7 +32,7 @@ export const LearningGraph = ({ data }: LearningGraphProps) => {
                   tick={{ fill: 'hsl(var(--muted-foreground))' }}
                 />
                 <YAxis 
-                  domain={[0, 100]}
+                  domain={[0, 5]}
                   className="text-xs"
                   tick={{ fill: 'hsl(var(--muted-foreground))' }}
                 />

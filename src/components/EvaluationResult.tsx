@@ -10,15 +10,17 @@ interface EvaluationResultProps {
 
 export const EvaluationResult = ({ score, feedback, topic }: EvaluationResultProps) => {
   const getScoreColor = (score: number) => {
-    if (score >= 80) return "text-green-500";
-    if (score >= 60) return "text-yellow-500";
-    return "text-orange-500";
+    if (score >= 4) return "text-green-500";
+    if (score >= 3) return "text-yellow-500";
+    if (score >= 2) return "text-orange-500";
+    return "text-red-500";
   };
 
   const getScoreIcon = (score: number) => {
-    if (score >= 80) return <CheckCircle2 className="w-8 h-8 text-green-500" />;
-    if (score >= 60) return <TrendingUp className="w-8 h-8 text-yellow-500" />;
-    return <AlertCircle className="w-8 h-8 text-orange-500" />;
+    if (score >= 4) return <CheckCircle2 className="w-8 h-8 text-green-500" />;
+    if (score >= 3) return <TrendingUp className="w-8 h-8 text-yellow-500" />;
+    if (score >= 2) return <AlertCircle className="w-8 h-8 text-orange-500" />;
+    return <AlertCircle className="w-8 h-8 text-red-500" />;
   };
 
   return (
@@ -37,7 +39,7 @@ export const EvaluationResult = ({ score, feedback, topic }: EvaluationResultPro
             <div>
               <p className="text-sm text-muted-foreground mb-1">Your Score</p>
               <p className={`text-5xl font-bold ${getScoreColor(score)}`}>
-                {score}/100
+                {score}/5
               </p>
             </div>
           </div>

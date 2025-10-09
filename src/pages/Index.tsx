@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Hero } from "@/components/Hero";
 import { EvaluationForm } from "@/components/EvaluationForm";
 import { EvaluationResult } from "@/components/EvaluationResult";
+import { DoubtChat } from "@/components/DoubtChat";
 import { LearningGraph } from "@/components/LearningGraph";
 import { useToast } from "@/hooks/use-toast";
 
@@ -11,16 +12,17 @@ const Index = () => {
     score: number;
     feedback: string;
     topic: string;
+    answer: string;
   } | null>(null);
   const { toast } = useToast();
 
-  // Sample data for the learning graph
+  // Sample data for the learning graph (0-5 scale)
   const [learningData, setLearningData] = useState([
-    { date: "Week 1", score: 65 },
-    { date: "Week 2", score: 72 },
-    { date: "Week 3", score: 78 },
-    { date: "Week 4", score: 85 },
-    { date: "Week 5", score: 88 },
+    { date: "Week 1", score: 2.5 },
+    { date: "Week 2", score: 3.0 },
+    { date: "Week 3", score: 3.5 },
+    { date: "Week 4", score: 4.0 },
+    { date: "Week 5", score: 4.2 },
   ]);
 
   const handleSubmit = async (topic: string, answer: string) => {
@@ -28,7 +30,8 @@ const Index = () => {
     
     // Simulate AI evaluation (replace with actual AI integration later)
     setTimeout(() => {
-      const mockScore = Math.floor(Math.random() * 30) + 70; // Random score between 70-100
+      const mockScore = Math.floor(Math.random() * 3) + 2.5; // Random score between 2.5-5
+      const roundedScore = Math.round(mockScore * 2) / 2; // Round to nearest 0.5
       const mockFeedback = `Great effort on explaining ${topic}! 
 
 Strengths:
@@ -44,20 +47,21 @@ Areas for Improvement:
 Keep up the excellent work! Your analytical approach shows promise. Focus on expanding your explanations with more concrete examples and you'll see continued improvement.`;
 
       setEvaluation({
-        score: mockScore,
+        score: roundedScore,
         feedback: mockFeedback,
         topic,
+        answer,
       });
 
       // Update learning data
       const today = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      setLearningData(prev => [...prev, { date: today, score: mockScore }]);
+      setLearningData(prev => [...prev, { date: today, score: roundedScore }]);
 
       setIsLoading(false);
       
       toast({
         title: "Evaluation Complete!",
-        description: `Your score: ${mockScore}/100`,
+        description: `Your score: ${roundedScore}/5`,
       });
 
       // Scroll to results
@@ -74,13 +78,17 @@ Keep up the excellent work! Your analytical approach shows promise. Focus on exp
       <EvaluationForm onSubmit={handleSubmit} isLoading={isLoading} />
       
       {evaluation && (
-        <div id="evaluation-results">
-          <EvaluationResult 
-            score={evaluation.score}
-            feedback={evaluation.feedback}
-            topic={evaluation.topic}
-          />
-        </div>
+        <>
+          <div id="evaluation-results">
+            <EvaluationResult 
+              score={evaluation.score}
+              feedback={evaluation.feedback}
+              topic={evaluation.topic}
+            />
+          </div>
+          
+          <DoubtChat topic={evaluation.topic} answer={evaluation.answer} />
+        </>
       )}
       
       <LearningGraph data={learningData} />
