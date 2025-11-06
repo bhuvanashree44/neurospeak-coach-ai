@@ -11,7 +11,7 @@ serve(async (req) => {
   }
 
   try {
-    const { text, topic } = await req.json();
+    const { text, topic, bertKeywords } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
     if (!LOVABLE_API_KEY) {
@@ -37,10 +37,12 @@ serve(async (req) => {
 
 "${text}"
 
+BERT has identified these keywords in the student's answer: ${bertKeywords && bertKeywords.length > 0 ? bertKeywords.join(', ') : 'none detected'}
+
 Provide a comprehensive evaluation with:
 1. A score from 0-5 based on content quality, depth of understanding, and keyword coverage
 2. Clear, student-friendly feedback highlighting what they did well and specific areas they need to improve
-3. Keywords they successfully covered
+3. Keywords they successfully covered (include BERT-detected keywords if relevant)
 4. Important keywords they missed that should be included
 
 Focus on helping the student understand exactly what they're lacking and how to improve.`

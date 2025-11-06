@@ -28,12 +28,12 @@ const Index = () => {
     { date: "Week 5", score: 4.2 },
   ]);
 
-  const handleSubmit = async (topic: string, answer: string) => {
+  const handleSubmit = async (topic: string, answer: string, bertKeywords: string[]) => {
     setIsLoading(true);
     
     try {
       const { data, error } = await supabase.functions.invoke('evaluate-text', {
-        body: { text: answer, topic }
+        body: { text: answer, topic, bertKeywords }
       });
 
       if (error) {

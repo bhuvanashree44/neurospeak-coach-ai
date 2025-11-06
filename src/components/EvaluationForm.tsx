@@ -5,20 +5,24 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, Send } from "lucide-react";
+import { useBertKeywords } from "@/hooks/useBertKeywords";
 
 interface EvaluationFormProps {
-  onSubmit: (topic: string, answer: string) => void;
+  onSubmit: (topic: string, answer: string, bertKeywords: string[]) => void;
   isLoading: boolean;
 }
 
 export const EvaluationForm = ({ onSubmit, isLoading }: EvaluationFormProps) => {
   const [topic, setTopic] = useState("");
   const [answer, setAnswer] = useState("");
+  const { extractKeywords, isExtracting } = useBertKeywords();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (topic.trim() && answer.trim()) {
-      onSubmit(topic, answer);
+      // Extract keywords using BERT before sending to GenAI
+      const bertKeywords = await extractKeywords(answer, topic);
+      onSubmit(topic, answer, bertKeywords);
     }
   };
 
@@ -61,13 +65,13 @@ export const EvaluationForm = ({ onSubmit, isLoading }: EvaluationFormProps) => 
               type="submit" 
               variant="hero"
               size="lg"
-              disabled={isLoading || !topic.trim() || !answer.trim()}
+              disabled={isLoading || isExtracting || !topic.trim() || !answer.trim()}
               className="w-full"
             >
-              {isLoading ? (
+              {isLoading || isExtracting ? (
                 <>
                   <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Evaluating...
+                  {isExtracting ? 'Extracting Keywords...' : 'Evaluating...'}
                 </>
               ) : (
                 <>
